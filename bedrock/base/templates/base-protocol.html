@@ -143,6 +143,12 @@
     {% endblock %}
 
     <!--[if !IE]><!-->
+    {% block glean %}
+      {% if switch('glean-analytics') %}
+        {{ js_bundle('glean') }}
+      {% endif %}
+    {% endblock %}
+
     {% block js %}{% endblock %}
 
     {% if self.structured_data()|trim|length %}

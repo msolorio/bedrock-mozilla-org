@@ -1,0 +1,152 @@
+---
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+page:
+  viewed:
+    type: datetime
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+    description: |
+      The time a page was viewed.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  path:
+    type: string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+    description: |
+      The URL path of the page that was viewed, excluding locale.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  locale:
+    type: string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+    description: |
+      The locale of the page that was viewed.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  query_params:
+    type: labeled_string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+    description: |
+      Query parameters associated with the URL of
+      the page that was viewed.
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+    labels:
+      - utm_source
+      - utm_campaign
+      - utm_medium
+      - utm_content
+      - entrypoint_experiment
+      - entrypoing_variation
+      - experiment
+      - variation
+      - v
+      - xv
+  referrer:
+    type: string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+    description: |
+      The referring URL that linked to this page.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+
+element:
+  label:
+    type: string
+    lifetime: ping
+    send_in_pings:
+      - interaction
+    description: |
+      Text label of the page element that was clicked e.g.
+      'Download Firefox', 'Get Mozilla VPN'.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  type:
+    type: string
+    lifetime: ping
+    send_in_pings:
+      - interaction
+    description: |
+      The type of the page element that was clicked
+      e.g. 'link', 'button'.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  position:
+    type: string
+    lifetime: ping
+    send_in_pings:
+      - interaction
+    description: |
+      The page position of the link that was clicked
+      e.g. 'primary', 'secondary', 'navigation', 'footer'.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never

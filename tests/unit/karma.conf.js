@@ -64,6 +64,9 @@ module.exports = function (config) {
             'tests/unit/spec/careers/params.js',
             'tests/unit/spec/firefox/all/all-downloads-unified.js',
             'tests/unit/spec/firefox/new/common/thanks.js',
+            'tests/unit/spec/glean/elements.js',
+            'tests/unit/spec/glean/page.js',
+            'tests/unit/spec/glean/utils.js',
             'tests/unit/spec/externalpages/pocket/mobile-nav.js',
             'tests/unit/spec/products/vpn/affiliate-attribution.js',
             {
@@ -149,6 +152,11 @@ module.exports = function (config) {
 
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,
+
+        // Supress console logs triggered in code.
+        client: {
+            captureConsole: false
+        },
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
