@@ -1,0 +1,162 @@
+---
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+page:
+  viewed:
+    type: datetime
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+      - non-interaction
+    description: |
+      The time a page was viewed.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  path:
+    type: string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+      - non-interaction
+    description: |
+      The URL path of the page that was viewed, excluding locale.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  locale:
+    type: string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+      - non-interaction
+    description: |
+      The locale of the page that was viewed.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  query_params:
+    type: labeled_string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+      - non-interaction
+    description: |
+      Query parameters associated with the URL of
+      the page that was viewed.
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+    labels:
+      - utm_source
+      - utm_campaign
+      - utm_medium
+      - utm_content
+      - entrypoint_experiment
+      - entrypoing_variation
+      - experiment
+      - variation
+      - v
+      - xv
+  referrer:
+    type: string
+    lifetime: application
+    send_in_pings:
+      - page-view
+      - interaction
+      - non-interaction
+    description: |
+      The referring URL that linked to the page that was viewed.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+
+element:
+  label:
+    type: string
+    lifetime: ping
+    send_in_pings:
+      - interaction
+      - non-interaction
+    description: |
+      Label that describes the event or page element that
+      was interacted with. Examples: 'Download Firefox',
+      'Get Mozilla VPN'.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  type:
+    type: string
+    lifetime: ping
+    send_in_pings:
+      - interaction
+      - non-interaction
+    description: |
+      The type of element that was interacted with.
+      Examples: 'Button', 'Link', 'Newsletter Signup'.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never
+  position:
+    type: string
+    lifetime: ping
+    send_in_pings:
+      - interaction
+      - non-interaction
+    description: |
+      The position of an element in the page associated with
+      an interaction. Examples: 'Primary', 'Secondary',
+      'Navigation', 'Footer'.
+    data_sensitivity:
+      - web_activity
+    bugs:
+      - https://github.com/mozilla/bedrock/issues/10746
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=TODO#c0
+    notification_emails:
+      - marketing-websites-team@mozilla.com
+    expires: never

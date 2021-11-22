@@ -172,10 +172,24 @@
                     enableFormFields();
                     newsletterSuccess();
 
+                    const newsletterLabel = newsletters
+                        .map((n) => {
+                            return n;
+                        })
+                        .join(',');
+
                     if (window.dataLayer) {
                         window.dataLayer.push({
                             event: 'newsletter-signup-success',
-                            newsletter: newsletters
+                            newsletter: newsletterLabel
+                        });
+                    }
+
+                    // Track event in Glean.
+                    if (typeof window.Mozilla.Glean !== 'undefined') {
+                        window.Mozilla.Glean.interaction({
+                            label: newsletterLabel,
+                            type: 'Newsletter Signup Success'
                         });
                     }
                 } else {

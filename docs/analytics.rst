@@ -159,4 +159,103 @@ click with the following structure:
     | Event Action: {{data-cta-type}} click
     | Event Label: {{data-cta-name}}
 
+Glean
+-----
 
+Currently in an evaluation phase, bedrock is now capable of running a parallel
+first-party analytics implementation alongside :abbr:`GTM (Google Tag Manager)`,
+using Mozilla's own `Glean`_ telemetry :abbr:`SDK (Software Development Kit)`.
+See the `Glean Book`_ for more developer reference documentation.
+
+Glean is currently behind a feature switch called ``SWITCH_GLEAN_ANALYTICS``.
+When the switch is enabled pages will load the our Glean JavaScript bundle,
+which will do things like register page views and capture link clicks. Our
+implementation leverages the same HTML data attributes that we use for
+:abbr:`GTM (Google Tag Manager)` when tracking link clicks, so any attributes
+you add for :abbr:`GTM (Google Tag Manager)` shold also be captured by Glean
+automatically.
+
+Debugging Pings
+~~~~~~~~~~~~~~~
+
+For all non-production environments, bedrock will automatically set a debug
+view tag for all pings. This means that when running on localhost, on a demo,
+or on a staging environment, ping data will not be sent to the production data
+pipeline. Instead, it will be sent to the `Glean debug dashboard`_ which can
+be used to test that pings are working correctly. All bedrock debug pings will
+register in the debug dashboard with the tag name ``moz-bedrock``.
+
+Logging Pings in the Console
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When running bedrock locally, you can also set the following environment variable
+in your ``.env``` file to automatically log pings in the browser's web console.
+This can be especially useful when making updates to analytics code.
+
+.. code-block::
+
+    GLEAN_LOG_PINGS=True
+
+Defining Metrics and Pings
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All of the data we send to the Glean pipeline is defined in
+:abbr:`YAML (Yet Another Markup Language)` schema files in the ``./glean/``
+project root directory. The ``metrics.yaml`` file defines all the different
+metrics types we record, and the ``pings.yaml`` file defines the name of each
+ping event we use to send collections of individual metrics. These are all
+automatically documented in ``./glean/docs/``.
+
+When bedrock starts, we automatically run ``npm run glean`` which parses these
+schema files and then generates some JavaScript library code in
+``./media/js/libs/glean/``. This library code is not committed to the repository
+on purpose, in order to avoid people altering it and becoming out of sync with
+the schema. This library code is then imported into our Glean analytics code in
+``./media/js/glean/``, which is where we initiate page views and capture click
+events.
+
+Running ``npm run glean`` can also be performed independently of starting bedrock.
+It will also do things such as lint schema files and automatically generate the
+schema docs.
+
+Using Glean pings in individual page bundles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All of our analytics code for Glean lives in a single bundle in the base template,
+which is intended to be shared across all web pages. There may be times where we
+want to send a ping from some JavaScript that exists only in a certain page
+specific bundle however. For instances like this, there are two global helper
+functions available.
+
+For user initiated events, such as clicks:
+
+.. code-block:: javascript
+
+    if (typeof window.Mozilla.Glean !== 'undefined') {
+        window.Mozilla.Glean.interaction({
+            label: 'Fundraising Banner',
+            type: 'Banner Dismissal'
+        });
+    }
+
+For non-interaction events that are not user initiated:
+
+.. code-block:: javascript
+
+    if (typeof window.Mozilla.Glean !== 'undefined') {
+        window.Mozilla.Glean.nonInteraction({
+            label: 'Auto Play',
+            type: 'Video'
+            position: 'Primary'
+        });
+    }
+
+Parameters for both helpers are as follows:
+
+1. ``label`` descriptive label specific to the event (string).
+2. ``type`` type of event that occured (string, optional)
+3. ``position`` position of page element related to the event that occured (string, optional)
+
+.. _Glean: https://docs.telemetry.mozilla.org/concepts/glean/glean.html
+.. _Glean Book: https://mozilla.github.io/glean/book/index.html
+.. _Glean debug dashboard: https://debug-ping-preview.firebaseapp.com/
