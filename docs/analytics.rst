@@ -218,23 +218,29 @@ Running ``npm run glean`` can also be performed independently of starting bedroc
 It will also do things such as lint schema files and automatically generate the
 schema docs.
 
+.. Important::
+
+    All metrics and pings we record using Glean must first undergo a `data review`_
+    before being made active in production. Therefore anytime we make new additions
+    to these files, those changes should also undergo review.
+
 Using Glean pings in individual page bundles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All of our analytics code for Glean lives in a single bundle in the base template,
 which is intended to be shared across all web pages. There may be times where we
 want to send a ping from some JavaScript that exists only in a certain page
-specific bundle however. For instances like this, there are two global helper
-functions available.
+specific bundle however. For instances like this, there is a global ``pageEvent``
+helper available.
 
 For user initiated events, such as clicks:
 
 .. code-block:: javascript
 
     if (typeof window.Mozilla.Glean !== 'undefined') {
-        window.Mozilla.Glean.interaction({
-            label: 'Fundraising Banner',
-            type: 'Banner Dismissal'
+        window.Mozilla.Glean.pageEvent({
+            label: 'Newsletters: mozilla-and-you',
+            type: 'Newsletter Signup Success'
         });
     }
 
@@ -243,19 +249,14 @@ For non-interaction events that are not user initiated:
 .. code-block:: javascript
 
     if (typeof window.Mozilla.Glean !== 'undefined') {
-        window.Mozilla.Glean.nonInteraction({
+        window.Mozilla.Glean.pageEvent({
             label: 'Auto Play',
             type: 'Video'
-            position: 'Primary'
+            nonInteraction: true
         });
     }
-
-Parameters for both helpers are as follows:
-
-1. ``label`` descriptive label specific to the event (string).
-2. ``type`` type of event that occured (string, optional)
-3. ``position`` position of page element related to the event that occured (string, optional)
 
 .. _Glean: https://docs.telemetry.mozilla.org/concepts/glean/glean.html
 .. _Glean Book: https://mozilla.github.io/glean/book/index.html
 .. _Glean debug dashboard: https://debug-ping-preview.firebaseapp.com/
+.. _data revreview: https://wiki.mozilla.org/Data_Collection

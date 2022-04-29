@@ -4,45 +4,44 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import {
-    interaction as interactionPing,
-    nonInteraction as nonInteractionPing
-} from '../libs/glean/pings.js';
-import * as elementMetrics from '../libs/glean/element.js';
-
-function setElementMetrics(obj) {
-    if (typeof obj.type === 'string') {
-        elementMetrics.type.set(obj.type);
-    }
-
-    if (typeof obj.position === 'string') {
-        elementMetrics.position.set(obj.position);
-    }
-
-    elementMetrics.label.set(obj.label);
-}
+import { interaction as interactionPing } from '../libs/glean/pings.js';
+import * as element from '../libs/glean/element.js';
 
 function interaction(obj) {
     if (typeof obj !== 'object' && typeof obj.label !== 'string') {
         return;
     }
-    setElementMetrics(obj);
+
+    const data = {
+        label: obj.label
+    };
+
+    if (typeof obj.type === 'string') {
+        data['type'] = obj.type;
+    }
+
+    if (typeof obj.position === 'string') {
+        data['position'] = obj.position;
+    }
+
+    element.clicked.record(data);
     interactionPing.submit();
 }
 
-function nonInteraction(obj) {
-    if (typeof obj !== 'object' && typeof obj.label !== 'string') {
-        return;
-    }
-    setElementMetrics(obj);
-    nonInteractionPing.submit();
-}
+function getElementAttributes(e) {
+    let el = e.target;
 
-function pingElementClicks(e) {
-    const el = e.target;
+    // If the node isn't a link or button, traverse upward
+    // incase this is a nested child element.
+    if (
+        (el.nodeName !== 'A' || el.nodeName !== 'BUTTON') &&
+        Element.prototype.closest
+    ) {
+        el = el.closest('a') || el.closest('button');
+    }
 
     // Check all link and button elements for data attributes.
-    if (el.nodeName === 'A' || el.nodeName === 'BUTTON') {
+    if (el && (el.nodeName === 'A' || el.nodeName === 'BUTTON')) {
         const ctaText = el.getAttribute('data-cta-text');
         const linkName = el.getAttribute('data-link-name');
         const linkType = el.getAttribute('data-link-type');
@@ -92,13 +91,13 @@ function pingElementClicks(e) {
 function bindElementClicks() {
     document
         .querySelector('body')
-        .addEventListener('click', pingElementClicks, false);
+        .addEventListener('click', getElementAttributes, false);
 }
 
 function unbindElementClicks() {
     document
         .querySelector('body')
-        .removeEventListener('click', pingElementClicks, false);
+        .removeEventListener('click', getElementAttributes, false);
 }
 
-export { interaction, nonInteraction, bindElementClicks, unbindElementClicks };
+export { bindElementClicks, unbindElementClicks };

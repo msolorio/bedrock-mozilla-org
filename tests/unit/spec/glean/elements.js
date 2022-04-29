@@ -11,16 +11,11 @@
 
 import { testResetGlean } from '@mozilla/glean/testing';
 import {
-    interaction as interactionPingHelper,
-    nonInteraction as nonInteractionPingHelper,
     bindElementClicks,
     unbindElementClicks
 } from '../../../../media/js/glean/elements.es6';
-import * as elementMetrics from '../../../../media/js/libs/glean/element.js';
-import {
-    interaction as interactionPing,
-    nonInteraction as nonInteractionPing
-} from '../../../../media/js/libs/glean/pings.js';
+import * as element from '../../../../media/js/libs/glean/element.js';
+import { interaction as interactionPing } from '../../../../media/js/libs/glean/pings.js';
 
 describe('elements.js', function () {
     beforeEach(async function () {
@@ -51,13 +46,12 @@ describe('elements.js', function () {
             let validatorRun = false;
             const ping = interactionPing.testBeforeNextSubmit(
                 async function () {
-                    const label = await elementMetrics.label.testGetValue();
-                    const type = await elementMetrics.type.testGetValue();
-                    const position =
-                        await elementMetrics.position.testGetValue();
-                    expect(label).toEqual('Subscribe');
-                    expect(type).toEqual('button');
-                    expect(position).toEqual('primary');
+                    const snapshot = await element.clicked.testGetValue();
+                    expect(snapshot.length).toEqual(1);
+                    const click = snapshot[0];
+                    expect(click.extra.label).toEqual('Subscribe');
+                    expect(click.extra.type).toEqual('button');
+                    expect(click.extra.position).toEqual('primary');
                     validatorRun = true;
                 }
             );
@@ -90,13 +84,12 @@ describe('elements.js', function () {
             let validatorRun = false;
             const ping = interactionPing.testBeforeNextSubmit(
                 async function () {
-                    const label = await elementMetrics.label.testGetValue();
-                    const type = await elementMetrics.type.testGetValue();
-                    const position =
-                        await elementMetrics.position.testGetValue();
-                    expect(label).toEqual('Submit');
-                    expect(type).toEqual('button');
-                    expect(position).toEqual('primary');
+                    const snapshot = await element.clicked.testGetValue();
+                    expect(snapshot.length).toEqual(1);
+                    const click = snapshot[0];
+                    expect(click.extra.label).toEqual('Submit');
+                    expect(click.extra.type).toEqual('button');
+                    expect(click.extra.position).toEqual('primary');
                     validatorRun = true;
                 }
             );
@@ -129,13 +122,14 @@ describe('elements.js', function () {
             let validatorRun = false;
             const ping = interactionPing.testBeforeNextSubmit(
                 async function () {
-                    const label = await elementMetrics.label.testGetValue();
-                    const type = await elementMetrics.type.testGetValue();
-                    const position =
-                        await elementMetrics.position.testGetValue();
-                    expect(label).toEqual('Firefox Download Desktop');
-                    expect(type).toEqual('macOS');
-                    expect(position).toEqual('primary');
+                    const snapshot = await element.clicked.testGetValue();
+                    expect(snapshot.length).toEqual(1);
+                    const click = snapshot[0];
+                    expect(click.extra.label).toEqual(
+                        'Firefox Download Desktop'
+                    );
+                    expect(click.extra.type).toEqual('macOS');
+                    expect(click.extra.position).toEqual('primary');
                     validatorRun = true;
                 }
             );
@@ -149,56 +143,39 @@ describe('elements.js', function () {
         });
     });
 
-    describe('Interaction Ping Helper', function () {
-        it('should send an interaction ping when called directly', async function () {
+    describe('Nested element click (data-cta)', function () {
+        beforeEach(async function () {
+            const link = `<button type="button" class="mzp-c-button glean-test-element" data-cta-text="Subscribe" data-cta-type="button" data-cta-position="primary">
+                    <span class="child-element">Subscribe</span>
+                </button>`;
+            document.body.insertAdjacentHTML('beforeend', link);
+        });
+
+        afterEach(function () {
+            document
+                .querySelectorAll('.glean-test-element')
+                .forEach(function (e) {
+                    e.parentNode.removeChild(e);
+                });
+        });
+
+        it('should send an interaction ping for a parent element when element a child element is clicked', async function () {
             let validatorRun = false;
             const ping = interactionPing.testBeforeNextSubmit(
                 async function () {
-                    const label = await elementMetrics.label.testGetValue();
-                    const type = await elementMetrics.type.testGetValue();
-                    const position =
-                        await elementMetrics.position.testGetValue();
-                    expect(label).toEqual('Fundraising Banner');
-                    expect(type).toEqual('Banner Dismissal');
-                    expect(position).toEqual('Primary');
+                    const snapshot = await element.clicked.testGetValue();
+                    expect(snapshot.length).toEqual(1);
+                    const click = snapshot[0];
+                    expect(click.extra.label).toEqual('Subscribe');
+                    expect(click.extra.type).toEqual('button');
+                    expect(click.extra.position).toEqual('primary');
                     validatorRun = true;
                 }
             );
 
-            interactionPingHelper({
-                label: 'Fundraising Banner',
-                type: 'Banner Dismissal',
-                position: 'Primary'
-            });
-
-            // Wait for the validation to finish.
-            await ping;
-
-            expect(validatorRun).toBeTrue();
-        });
-    });
-
-    describe('Non-Interaction Ping Helper', function () {
-        it('should send a non-interaction ping when called directly', async function () {
-            let validatorRun = false;
-            const ping = nonInteractionPing.testBeforeNextSubmit(
-                async function () {
-                    const label = await elementMetrics.label.testGetValue();
-                    const type = await elementMetrics.type.testGetValue();
-                    const position =
-                        await elementMetrics.position.testGetValue();
-                    expect(label).toEqual('Fundraising Banner');
-                    expect(type).toEqual('Banner Dismissal');
-                    expect(position).toEqual('Primary');
-                    validatorRun = true;
-                }
-            );
-
-            nonInteractionPingHelper({
-                label: 'Fundraising Banner',
-                type: 'Banner Dismissal',
-                position: 'Primary'
-            });
+            document
+                .querySelector('.glean-test-element > .child-element')
+                .click();
 
             // Wait for the validation to finish.
             await ping;

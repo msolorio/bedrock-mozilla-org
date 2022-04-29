@@ -52,7 +52,7 @@ if (typeof window.Mozilla === 'undefined') {
 
         // Track event in Glean.
         if (typeof window.Mozilla.Glean !== 'undefined') {
-            window.Mozilla.Glean.interaction({
+            window.Mozilla.Glean.pageEvent({
                 label: Banner.id,
                 type: 'Banner Dismissal'
             });

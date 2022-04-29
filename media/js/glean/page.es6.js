@@ -4,9 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import * as pageMetrics from '../libs/glean/page.js';
+import * as page from '../libs/glean/page.js';
 import Utils from './utils.es6';
-import { pageView as pageViewPing } from '../libs/glean/pings.js';
+import {
+    pageView as pageViewPing,
+    interaction as interactionPing,
+    nonInteraction as nonInteractionPing
+} from '../libs/glean/pings.js';
 
 const validParams = [
     'utm_source',
@@ -22,10 +26,10 @@ const validParams = [
 ];
 
 function initPageView() {
-    pageMetrics.viewed.set();
-    pageMetrics.path.set(Utils.getPathFromUrl());
-    pageMetrics.locale.set(Utils.getLocaleFromUrl());
-    pageMetrics.referrer.set(Utils.getReferrer());
+    page.viewed.set();
+    page.path.set(Utils.getPathFromUrl());
+    page.locale.set(Utils.getLocaleFromUrl());
+    page.referrer.set(Utils.getReferrer());
 
     const params = Utils.getQueryParamsFromURL();
 
@@ -40,7 +44,7 @@ function initPageView() {
             if (v) {
                 v = decodeURIComponent(v);
                 if (allowedChars.test(v)) {
-                    pageMetrics.queryParams[p].set(v);
+                    page.queryParams[p].set(v);
                 }
             }
         }
@@ -49,4 +53,29 @@ function initPageView() {
     pageViewPing.submit();
 }
 
-export { initPageView };
+function pageEvent(obj) {
+    if (typeof obj !== 'object' && typeof obj.label !== 'string') {
+        return;
+    }
+
+    const data = {
+        label: obj.label
+    };
+
+    if (typeof obj.type === 'string') {
+        data['type'] = obj.type;
+    }
+
+    page.pageEvent.record(data);
+
+    if (
+        typeof obj.nonInteraction === 'boolean' &&
+        obj.nonInteraction === true
+    ) {
+        nonInteractionPing.submit();
+    } else {
+        interactionPing.submit();
+    }
+}
+
+export { initPageView, pageEvent };

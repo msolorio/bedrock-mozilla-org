@@ -29,6 +29,16 @@ const Utils = {
 
     getReferrer: function (ref) {
         return typeof ref === 'string' ? ref : document.referrer;
+    },
+
+    isTelemetryEnabled: function () {
+        if (
+            typeof Mozilla.Cookies !== 'undefined' &&
+            Mozilla.Cookies.enabled()
+        ) {
+            return !Mozilla.Cookies.hasItem('moz-1st-party-data-opt-out');
+        }
+        return true;
     }
 };
 

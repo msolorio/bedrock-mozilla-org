@@ -23,10 +23,9 @@
 
         // Track event in Glean.
         if (typeof window.Mozilla.Glean !== 'undefined') {
-            window.Mozilla.Glean.interaction({
+            window.Mozilla.Glean.pageEvent({
                 label: 'Language Selected: ' + newLanguage,
-                type: 'Language Switcher',
-                position: 'footer'
+                type: 'Change Language'
             });
         }
     });

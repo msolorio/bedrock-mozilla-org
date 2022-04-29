@@ -172,23 +172,23 @@
                     enableFormFields();
                     newsletterSuccess();
 
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'newsletter-signup-success',
+                            newsletter: newsletters
+                        });
+                    }
+
                     const newsletterLabel = newsletters
                         .map((n) => {
                             return n;
                         })
-                        .join(',');
-
-                    if (window.dataLayer) {
-                        window.dataLayer.push({
-                            event: 'newsletter-signup-success',
-                            newsletter: newsletterLabel
-                        });
-                    }
+                        .join(', ');
 
                     // Track event in Glean.
                     if (typeof window.Mozilla.Glean !== 'undefined') {
-                        window.Mozilla.Glean.interaction({
-                            label: newsletterLabel,
+                        window.Mozilla.Glean.pageEvent({
+                            label: `Newsletters: ${newsletterLabel}`,
                             type: 'Newsletter Signup Success'
                         });
                     }
